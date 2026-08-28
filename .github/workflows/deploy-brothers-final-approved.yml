@@ -1,0 +1,35 @@
+name: Deploy final approved Brothers Tavern staging
+
+on:
+  push:
+    branches:
+      - netlify-final-approved-20260828b
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download final approved Brothers Tavern build
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 \
+            -o /tmp/brothers-tavern-final.zip \
+            "https://at.adobe.com/0cot8w5sL6yu1Pi3"
+          mkdir -p site
+          unzip -q /tmp/brothers-tavern-final.zip -d site
+          test -f site/index.html
+          test -f site/menu.html
+          test -f site/assets/css/site-20260828.css
+          test -f site/assets/img/home-master-approved.webp
+
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: |
+          npx -y @netlify/mcp@latest \
+            --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 \
+            --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..ornRUzcjF9RRbkCv.f4Lru7tOaPnb2JcTU-shAwKjulEMgRYaK97TKgyY_ard3NzRMGt5muLtD0u2_HeJKLpgcBzFpxJ1owHoGwp6zBkU4t0jTYHNCNQjEaznS4KBi7AFsm41kyI6tLBjXuhnsaF4KTR7R77I7xg3V02m2HOqKDF1RwQm8BIHLd9F8fB_yabRnnp1NVpJdHfsj9SU5fwFj-kfzZnEyE3dNUkpMFYlDxcBp0hdpeUIixcIWF6KIGhj3dulML5DvFv20cC49msT9OIwIfIKEVn2nrLiXZZ7OaN0j9pPzApT4PYMyHf49Xc_OIFvuWHtMsIJQPiyGMZUqBIlreKX_hT25KK9c9lQtSyQzYINJAsGT-QDb4i0rJmHZMRmwu8MWMXu2-HSLRBOaxSb.LqzPNZyEcVPkt76wiykKCg"
