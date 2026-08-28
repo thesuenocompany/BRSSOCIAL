@@ -1,0 +1,38 @@
+name: Deploy corrected Brothers Tavern menu
+
+on:
+  push:
+    branches:
+      - netlify-menu-corrected-20260828
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download corrected Brothers Tavern build
+        shell: bash
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 \
+            -o /tmp/brothers-tavern-site.zip \
+            "https://at.adobe.com/WnKQfZcJjC1QmvC8"
+          mkdir -p site
+          unzip -q /tmp/brothers-tavern-site.zip -d site
+          test -f site/index.html
+          test -f site/menu.html
+          test -f site/assets/css/menu-bright-20260828.css
+
+      - name: Deploy to Netlify staging
+        working-directory: site
+        shell: bash
+        run: |
+          npx -y @netlify/mcp@latest \
+            --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 \
+            --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..t6-Z43DULKJTUc2F.XtS1EwqRbCmKwjeQ0wDZYwl6RKiKpF-_WygbDiPwa3hQHettPwXlFvenjvg4KhpZQ35kBFVZ1Pg8haxG5HJEGWygeKCUkT5C-jSmIqHg3m0iOM2y-Dfsjk8w7bqUBXxQAoIYYPLPtR7C5Ncw9-39sbhDzQNZ5B8Jxy17EAabeoCQXIIiQ8emIo6tS0yW61EnbmvCIVE7orJKBCldgpILMSjie5SwNoWH-BqSeQGE53g9iPph99E5gopDwcOUf0BWSjB0HK_kx4P1s9vXPrHE4oSZS_704NNs-E7MpU4OzAZDCLiTMp1u_Phq3u4y8_vvT-cuzdBb-QAnzxoeQbH3hFP3mMNK02oCWHNOIv6d-w_lAY0ktZfJppByYX0C3LygwNIjtrQz.5F6PHHo3fPBOGHNynoLlww"
