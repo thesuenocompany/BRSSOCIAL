@@ -1,0 +1,31 @@
+name: Deploy Brothers Tavern sports schedule
+
+on:
+  push:
+    branches:
+      - netlify-sports-schedule-20260828
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download Brothers Tavern schedule build
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 \
+            -o /tmp/brothers-tavern-site.zip \
+            "https://at.adobe.com/ebDpkV87z58tN3Ez"
+          mkdir -p site
+          unzip -q /tmp/brothers-tavern-site.zip -d site
+          test -f site/index.html
+          test -f site/sports.html
+          test -f site/netlify/functions/schedule.mts
+
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: |
+          npx -y @netlify/mcp@latest \
+            --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 \
+            --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..D7ilZyUO-q3I_D8k.Daxv1NB20tgJEC7l6miGPCm1xggeHEqYy2SB-UbdCiRVh2LaAYoMvSQ90-xWoBS77oUoz2OdIL6en7mhcEsYan0WYPHFflhW0-EVaUh2HHmsbYIVA3jaRZGZPfUi-FCVP0bz8oYHTdVi61fjZJ1txaeSAWufuhQ1m6ZJAWwRFiTcuv3ptr1GmAxxyfd4D4BKxy2INPmVfUxEp_Ny37E3aw3Go_Pg9VCh3UysxxqinG53_PogC-x8FuU1Zue9Up6IiRq1g5NiOWxuxhtwgMtGcO7XSl8cfiX-y9qP6E6nEoRrQ84Jg5gr1hrU4Or_yzdn3VyVz3IgGNtBbY7O5leE1JyP1pjNA5PQYozWqDGt_usFZXb3OtsK5mDPOciEgHapzn82_7p4.EEeasRvXq9WT71aaFkL08A"
