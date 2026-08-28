@@ -1,0 +1,39 @@
+/* Approved Brothers Tavern homepage update, 2026-08-28. */
+.artboard--home { aspect-ratio: 1122 / 1330; }
+
+/* Invisible interaction areas stay invisible. No orange hover rectangles. */
+.hotspot:hover,
+.hotspot:active {
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+.hotspot:focus-visible {
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: inset 0 -2px 0 rgba(243,230,199,.9) !important;
+}
+
+/* Hotspots aligned to the approved 1122 x 1402 artwork, cropped above its baked footer. */
+.home-menu       { left: 29.1%; top: 1.3%; width: 6.8%; height: 3.6%; }
+.home-events     { left: 36.3%; top: 1.3%; width: 9.2%; height: 3.6%; }
+.home-sports     { left: 46.5%; top: 1.3%; width: 7.0%; height: 3.6%; }
+.home-liquor     { left: 54.8%; top: 1.3%; width: 12.7%; height: 3.6%; }
+.home-find       { left: 68.0%; top: 1.3%; width: 8.1%; height: 3.6%; }
+.home-directions { left: 85.0%; top: .8%; width: 13.0%; height: 4.4%; }
+.home-view-menu  { left: 3.5%; top: 38.3%; width: 16.5%; height: 4.0%; }
+.home-scoreboard { left: 82.0%; top: 46.7%; width: 16.0%; height: 3.5%; }
+.home-wings-menu { left: 3.7%; top: 69.0%; width: 16.5%; height: 3.6%; }
+.home-liquor-cta { left: 52.4%; top: 95.3%; width: 19.2%; height: 3.4%; }
+
+.score-live {
+  left: 18.2%;
+  top: 44.8%;
+  width: 63.8%;
+  height: 6.25%;
+}
+
+@media (max-width: 620px) {
+  .artboard--home { aspect-ratio: 1122 / 1330; }
+  .score-live { left: 18.2%; width: 63.8%; }
+}
