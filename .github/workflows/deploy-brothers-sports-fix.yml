@@ -1,0 +1,24 @@
+name: Deploy Brothers Tavern sports fix
+
+on:
+  push:
+    branches:
+      - netlify-sports-fix-20260828
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Download Brothers Tavern sports fix
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 -o /tmp/brothers.zip "https://at.adobe.com/VjxeSTqT71Mnnbcq"
+          mkdir -p site
+          unzip -q /tmp/brothers.zip -d site
+          test -f site/index.html
+          test -f site/sports.html
+          test -f site/sports-settings.html
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..kO81hlKZrhfXEnok.2AcK_5RqKYkcyXzqPUeu_LelgMDOMGWTQn0UkjMYB3jgMQIs_rj8U93AQCS5SloPFTD47LmDwR9GoWqUrZs8jAYLZp0tILeDqXyAyGjEGr1BF5eFck8KJMtgEs1f6GSPTtL_y_2K4Ulbt-vGyzAm-KZ423iBEvGFQFkVfV2RFecFyas0tM1OVEPnPZAExBKAK-FAPb8tZMkr0zfCKAwE657hE5Ja2KmOgEx7Thkef7ge2XkHAJLa1rLb5GYkYUT5kX1PWOfiXKD6SdB4ytPmW8_QIXmu6-Jr1_H9Qrwz7AiZvn3H4qW_irVGX3XhMG4gt5dvurlaNq4lefGTfWn6wtwAf3UWM0b_YPRSZ6BD_SCNokdA8ZRDnk6Fy8DKK27S0ytSTo4C.3PloEdXKy6NkJKNTsn1k2Q"
