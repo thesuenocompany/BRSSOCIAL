@@ -1,0 +1,21 @@
+name: Deploy Brothers Tavern management admin
+on:
+  push:
+    branches: [netlify-admin-management-20260829]
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern admin build
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 -o /tmp/brothers-admin.zip "https://at.adobe.com/pIgpmmgO75ynDTEj"
+          mkdir -p site
+          unzip -q /tmp/brothers-admin.zip -d site
+          test -f site/index.html
+          test -f site/admin.html
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..sKVBfYAOT-HZ0sO5.YxBKOho0DghNdQHrkKZYA2N87OZFa5UgoyswsSNk9XS-thbMr0ybbNYIvCspktAe56dpVQfaOB_mBGRjJZe4YA0lPTXQupeNYmYP26sbW-vsp7SENHhzfx9aM_ezVW1pu86AcZnBOAM7hAUbynLl2XJVtITy_nPiiUBI4quR7S-VneM-47Pa0nSvTaek2J0qoo1zu7eNdGGHID9n9w4Hevs3mU6JB9XY_JuavIHLUHVyW15TLafvhxoVAB7dkt5HLJg5eAXfZOvb_cSbqPHyF2Ok5WW1HjLPTIlnIs2_3GepaR1Ht2UotxS9c1TUyNW6W1Gpb38dtXEtK4q-wIc7BSoPJIzQRp4-U6mnnA6CLPLwQlz6_9KDgD5r4racSui0b24UnfMa.7N7oMQufY4xL1FOqcVWgcw"
