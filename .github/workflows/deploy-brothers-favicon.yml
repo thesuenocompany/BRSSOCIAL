@@ -1,0 +1,20 @@
+name: Deploy Brothers Tavern favicon
+on:
+  push:
+    branches: [netlify-generic-sports-manager-20260829]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern favicon build
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 -o /tmp/brothers.zip "https://at.adobe.com/6ECjpekkCytuvlef"
+          mkdir -p site
+          unzip -q /tmp/brothers.zip -d site
+          test -f site/index.html
+          grep -q 'rel="icon"' site/index.html
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..vMU4kPmeLVOc6kKf.BJo87Gz19SJNW6rV06msIHQx2N15n0NzQSUT6twm1qbRv78yypsq71gfj1V9rBjd6e7U_RdIr_egD0qReJ4fRLrRMST9gfpU4lD_tuIMkOF27fpIcOtRDNHNsKjGZ9fU0mEO9SNqdzxYAbi_sgbfUkybRaWrB91nsd7G_KRsFkVHVmd_LVdRD8T3NBxciaT4uJGHjdKqlgG3hQONlwJf7RMY0Pf2bK5hQaG71eZVxwEAEERn9gMPNnraxJZx0C6sPs3FiuHhy81FolAxXzWp9e4wpspg2wm86674ahw02JUvOgRMoGU9coU-PSrgOJ_V--kv47co-QI4utyU_HA9ODKYHPtACS2BvaTwjZbh4_mA7eA1VY0x4TSiZ5WZ5h0S4LLB4IDF.tOv8QN37v966zcMNgOOHEw"
