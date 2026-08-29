@@ -1,0 +1,20 @@
+name: Deploy Brothers Tavern generic sports manager
+on:
+  push:
+    branches: [netlify-generic-sports-manager-20260829]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern build
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 -o /tmp/brothers.zip "https://at.adobe.com/l9n3jdOFrZGIVCq0"
+          mkdir -p site
+          unzip -q /tmp/brothers.zip -d site
+          test -f site/index.html
+          test -f site/sports-settings.html
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..I04qjnPvssPPLeOL.FIarQFF6vo6D2n0Wk94f3LVowMlKTn1cpiGnwqMmgLi-7SiSwm0XsVcW3XvDeA4EzZzmxFXdWKmYA0VIuQHCZ6LOr3v1ztpyonU9hk4QDltUkRvJLzG5Yr1NUnm9dJFUk1GColHI9XVH4cbKM2Ok-BFseFfE-n7t7-NBHAjpox_pkhL_jnnMKdnm_hDXI-pbWNFHAS3ZQLDaX50wRYz2I9GAa1tVK0C65YvyBFZdY-GBhxLW4DMoY9AG1UCIs9KOFLKAp6APeDzigc1NcYKLdRasfoSeu4PN2DtbwDza9lNU6LKi-ltN-rahTejrdvkT4-2GgIdsX19duzQN88ZV5ib-c7P2FjRWbZG9jPXlpHQ8WGosS2TkDuBqp7IcFT7NNK4CYCS6.ymKrf7qYJCbDjjr32vNWfQ"
