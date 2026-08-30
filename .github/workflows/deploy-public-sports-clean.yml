@@ -1,0 +1,21 @@
+name: Deploy Brothers Tavern public sports cleanup
+
+on:
+  push:
+    branches:
+      - netlify-public-sports-clean-20260830
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern build
+        run: |
+          curl -L "https://at.adobe.com/aYJWmYmoc2W7seqO" -o site.zip
+          mkdir site
+          unzip -q site.zip -d site
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..CV-DYEvSRICpa63d.VsXCOV4elOjsp0R2F8TfFNlUEXir5dO76VYH7vOdZaM25OMgaLEfh8fAni3zCFxfcNGHY7mCEV4EF5HLMT-KAHBJRZtytZcQinLHxs_cF1BhQV3TueMHIeLxb9vJRRCa8UxfJPKUVC8octhTNDXXEgT8tyk-cbFLgX37UzTbGooJ2_kEOz8ZPFaHdUs-4wAqTp39qk2JetIWjvZCKkwD8KKfeh0UurNn2ooJnypmh5IzanP2tAfl3OoUX_A89Wm3ct0OPnNArgCdmEDypspYakv4nflB8Y5HqmypPS2CJ9tPtMaZsOQZheCbJwDBRxWVXSI576zk7DB4m8D5nuiTs64kJHraItKkDi0RZpPDryGujaEZdmbCO59nVVpmYHYSPjXLAywx.1i7IkKnl8_Els6fqt6PsCg"
