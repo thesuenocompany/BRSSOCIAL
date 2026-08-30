@@ -1,0 +1,18 @@
+name: Deploy Brothers Tavern Mailchimp
+on:
+  push:
+    branches:
+      - netlify-mailchimp-20260830
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern build
+        run: |
+          curl -L "https://at.adobe.com/3bXJFieixKLCejn9" -o brothers.zip
+          mkdir site
+          unzip -q brothers.zip -d site
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..5E4ga2bQnCHtjU_1.zms1y0B5Sq2F-eOAY9LUaRUYKfNrApOeCsyIp-zwjhhnXMlMWYz0WVvfqPmTb7Pinfbde02FFr2hiqtz4ETW0D2MlsvthnFfA4bycQkOehGxHT7WO4LO1P9rlic8Kwn1I05QiAcl6A-kkOmxTknH2rRwxpRtahRlyVhfZc0j56L0WQklgAH5-1gPp4CdoemN06Ipt8wWYlQdhKDxvt74HaIhuViRyiVXOGSWnd3QtE1N7QDasRFMgJ-3PuB8uZSAZBbHTKnUX7GMymcK80I27L5filgLVrVSee0HS9lKsHjXEXRh5dFnan5gU9NKMVYYuTfqSIuRhxz6kStoMdWJ3aLnXYkfi36KF0G_q2dSlKCgUKACij0OT-hePZe05zjhc2-2dTsz.KSDD5Zdc9mh7SqGoPDcSlw"
