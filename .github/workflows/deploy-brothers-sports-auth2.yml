@@ -1,0 +1,31 @@
+name: Deploy Brothers Tavern sports auth fix
+on:
+  push:
+    branches: [netlify-sports-auth2-20260829]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download current Brothers Tavern build
+        run: |
+          curl -L "https://at.adobe.com/ADYNgRAIVejU9zfM" -o build.zip
+          mkdir site
+          unzip -q build.zip -d site
+      - name: Patch sports Supabase auth
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('site/netlify/functions/schedule.mts')
+          s=p.read_text()
+          old="const SB = () => ({ base: Netlify.env.get('SUPABASE_URL'), key: Netlify.env.get('SUPABASE_PUBLISHABLE_KEY') });"
+          anon="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5a3Vra3picWtweXFmamdnbGFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMDY5MjEsImV4cCI6MjEwMDc4MjkyMX0.BeamV-Th24HiwRSSYGmCnxVFo0knNl4pSYkJNs2A7Xc"
+          new=f"const LEGACY_ANON = '{anon}';\nconst SB = () => ({{ base: Netlify.env.get('SUPABASE_URL'), key: LEGACY_ANON }});"
+          s=s.replace(old,new)
+          s=s.replace("const r=await fetch(`${base}/rest/v1/${path}`,{headers:{apikey:key,Accept:'application/json'}});", "const r=await fetch(`${base}/rest/v1/${path}`,{headers:{apikey:key,Authorization:`Bearer ${key}`,Accept:'application/json'}});")
+          s=s.replace("if(!r.ok) throw new Error(`Supabase ${r.status}`); return r.json();", "if(!r.ok){const body=await r.text(); throw new Error(`Supabase ${r.status}: ${body.slice(0,180)}`)} return r.json();")
+          p.write_text(s)
+          PY
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..3voz-ms_CnmWQmyQ.Z-D2uMxaI9voCC01_nXkjx76HCukDSbD7fRiRETBjrOaLO-mHc6I83it9qkDkyqnePgDiFutq2_9QGEpNpjCLaG2PvXQWIDlU4jwYkSJ3JllMzkx58NnJE5KuRVq00QGxnTxm14uwm3eQTlJrP1THW10SJjauJGImToyoQr9GfosfjezoEw-3937eQZuCrh_XiAdkq5zHdASyMRV9o6-wCmZZ4GsrNLvUv0DKRUR5WA0SUBHCSLHpUkSaSRDatg-2DSFnN-tk7RIk35k4aOrn577INW1qCfyaVkcjftt1IysmeAIAP04JBARx1dTh0rt2BIuyxTZqIYhGZcS9EELSIfms7iwXmaNLXo3HZUZzF6-p8ObyrZoMs-5twWO17XhYZCj_x1f.EQvl3E1q0cDlc8S8Q10HIA"
