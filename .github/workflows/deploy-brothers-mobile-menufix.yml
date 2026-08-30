@@ -1,0 +1,70 @@
+name: Deploy Brothers Tavern mobile menu fix
+
+on:
+  push:
+    branches:
+      - netlify-mobile-menufix-20260830
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download current mobile build
+        run: |
+          mkdir site
+          curl -L "https://at.adobe.com/kj6WN6fg9M4a3jWJ" -o site.zip
+          unzip -q site.zip -d site
+
+      - name: Fix menu Supabase authentication
+        run: |
+          cat > site/netlify/functions/menu.mts <<'EOF'
+          import type { Config, Context } from '@netlify/functions';
+
+          async function get(path: string) {
+            const url = Netlify.env.get('SUPABASE_URL');
+            const key = Netlify.env.get('SUPABASE_ANON_KEY') || Netlify.env.get('SUPABASE_PUBLISHABLE_KEY');
+            if (!url || !key) throw new Error('Supabase menu configuration missing');
+            const headers: Record<string, string> = { apikey: key, Accept: 'application/json' };
+            if (key.split('.').length === 3) headers.Authorization = `Bearer ${key}`;
+            const r = await fetch(`${url}/rest/v1/${path}`, { headers });
+            if (!r.ok) {
+              const detail = await r.text();
+              console.error(`Menu Supabase request failed ${r.status}: ${detail}`);
+              throw new Error(`Menu data request failed (${r.status})`);
+            }
+            return r.json();
+          }
+
+          export default async (_req: Request, _ctx: Context) => {
+            try {
+              const [categories, items] = await Promise.all([
+                get('tavern_menu_categories?select=id,name,slug,section,subtitle,display_order&active=eq.true&order=display_order.asc'),
+                get('tavern_menu_items?select=id,category_id,name,description,price_label,display_order&active=eq.true&order=display_order.asc')
+              ]);
+              return Response.json({ categories, items }, { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=300' } });
+            } catch (error) {
+              console.error(error);
+              return Response.json({ error: 'menu_unavailable', categories: [], items: [] }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
+            }
+          };
+
+          export const config: Config = { path: '/api/menu' };
+          EOF
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('site/assets/js/menu-live.js')
+          s=p.read_text()
+          needle="function render(payload){const cats=payload.categories||[],items=payload.items||[];"
+          if needle in s and "No menu categories returned" not in s:
+              s=s.replace(needle, needle+"if(!cats.length){throw new Error('No menu categories returned');}")
+          p.write_text(s)
+          PY
+
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: >-
+          npx -y @netlify/mcp@latest
+          --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4
+          --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..cSGEX1AgLFstra4i.gqjykW4UFg9NQUkFtj5KbGUkIuO2HdwfRaLbQzTp1BSp8hp5ugEw6_RB7Adi7c2XJ_p1gHH4h_juyVpMfsTaY22SN5uqOm3HRJLysdskxjePs5AaMb_mikSLXVvh4ooHx-WC0zLtQHK6eCThBIQHNk5fTykLLBD01IRX7mcv26y1KTXqDmUyCcdaiM62ZTT32gO6hUl25A5rqV4xGnaCpra2fSQiUHFpJUBZnhf_YQmQ-nxgab-vc00stdKbn_cn64DSNmdudLkArQfFwgM1PWMmb_ZI66UTi4u5Cqw6f25lQfK99_liepPWn2-Qvg14GSKXDtkxWMv2GWHt62ejx6_iDEaEPF-0i8ZdoKaPFdj9qYMikYYtz8NX6vFHs0EuDM9i4gDr.rwoMOZPCnvC-pcj5wwo9sQ"
