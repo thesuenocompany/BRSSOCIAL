@@ -1,0 +1,22 @@
+name: Deploy Brothers Tavern real menu fix
+
+on:
+  push:
+    branches:
+      - netlify-menu-real-fix-20260830
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download fixed Brothers Tavern build
+        run: |
+          curl -L --fail --retry 3 "https://at.adobe.com/chhG3gumbgZHoXOQ" -o site.zip
+          mkdir site
+          unzip -q site.zip -d site
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..UjcM2VNUjS_Kvb41.CeQsWU6JREVae9Um-ff9TU_QveaNcjOS1jCcdtfcv0H5JfJyh2KdoNsYE3ZR-6jzStJmbzwTLwt3LNmuwoPLu28VVYfIO4G5H86t_ypPuRDW1ACzZO-GUZ1Pw7xOfUi5LcA4XA3ut-2ogcP4udNH4LV-0X82ncNY13OzJoE2IXnKzBQWWO0zA1zr1fG6R0-7QovdZFWDkUZv62k-1If1kZUdRh8oLelnZwjjdqUrNol6IGmIz_LM2bmdbrmXGxMnpWfC-B_LD2Bf8k3Bao04JMsWTrOH_1vmmQ7_qCGlpUbH0YsUAhaFJfo6uORFSih2DvtoUX1WSCjhtgWIuATt0eGUgZtavOxF7GTXc6FM9JYVYrmbeblDFUcBxjxeM1osj6SyoDwU.1nHiZPsufHJ1y_c3h1qhaQ"
