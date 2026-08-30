@@ -1,0 +1,18 @@
+name: Deploy Brothers Tavern sports final fix
+on:
+  push:
+    branches:
+      - netlify-sports-final-20260830
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern build
+        run: |
+          curl -L "https://at.adobe.com/goUjf1CRY4LSoCuJ" -o brothers.zip
+          mkdir site
+          unzip -q brothers.zip -d site
+      - name: Deploy to Netlify staging
+        working-directory: site
+        run: npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0.._L7a0HjxXZ-4mNqw.5a5_eDWzoqMCnQo1RQNuZmbJxoIHAdINVv3bMApC_3Xn6w8TnymjlJNEHKNr3yT5xHq60-XZmwi5yCtIWd5UtzKJjGwXhq9T-oeKKPeUlGYdUADUynZGelFz2oaunkRAhVL3ZVKf5WC_RhkqxJEerh-sf2ua3ijdoal5onDW97iBpROsXo0eKySCVdDFjz0vGSaszUs4hqbk0j2MBV6plGrD1uSN-sQ1r7IIsc2Kx3Tzy_w-I9j5U3G_6csMGHafF_dj_68zZ5NgJlBl2mmn4IHd6S0YKgLOWBz-8Hn7x29WgMB0w-55gpa88cg0GrnTyc2sQ-NfxTBJi3mynDnodoqW9CH80e6RFvpti0udErQlWWG0vrysKDHBw7l5_7oUHNsEEQEy.x_YN1jLvK-XT8tOqcu70Xw"
