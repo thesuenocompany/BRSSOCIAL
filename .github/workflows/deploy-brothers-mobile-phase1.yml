@@ -1,0 +1,19 @@
+name: Deploy Brothers Tavern mobile phase 1
+on:
+  push:
+    branches:
+      - netlify-mobile-phase1-20260830
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern build
+        run: |
+          curl -L "https://at.adobe.com/kj6WN6fg9M4a3jWJ" -o /tmp/brothers.zip
+          mkdir -p /tmp/brothers
+          unzip -q /tmp/brothers.zip -d /tmp/brothers
+      - name: Deploy to Netlify staging
+        working-directory: /tmp/brothers
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..ES99WpyVoNXXRyfl.G3echbH05N_pMy0lBZFTFpFupzaQYpS1ynmFDBuZQkKa3Few3psthLAv6M5yfzCt5W36Y0_aklQKJzNcIzubtGGdtsA9h9TzeJUq7X6J6MlZyWmo-oTqn4DxfmseV9t19AraDObMf2r8C-OtQ_C3rkmyimC2aQ8_0vzgtPTX3zPRcmOye1vcFxn8ri_Fmb7Yt566NFVfT9oYoMdr17ZfFf6BEcs398FH2rGoYPhPPcL2DgnI82tvIny48cx3TdcKwEIvIZWyTWYk8oqrMQlK9NlIw3WYsWzhiEjHydFoAIG_ncbpuz5rQ1_IkVUp1Dh2zIJigViSgy0BrIROzPxXtok7pK8GYjQaru-hbrK7VqBj1hNKTkQknFIUfRV96Q0qVRUuwz1v.eFWhQTQmiQRSamzrNQqYQg"
