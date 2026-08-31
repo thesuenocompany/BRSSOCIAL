@@ -1,0 +1,22 @@
+name: Deploy Brothers Tavern admin footer
+
+on:
+  push:
+    branches:
+      - netlify-admin-footer-20260831
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern build
+        run: |
+          curl -L "https://at.adobe.com/IU4p2U4Ge9vnCA2R" -o site.zip
+          rm -rf deploy-site
+          mkdir deploy-site
+          unzip -q site.zip -d deploy-site
+      - name: Deploy to Netlify staging
+        working-directory: deploy-site
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..ZK_7ePuZuyvLfEim.H9ieUUYtyqlKrkiFr-ySJzhgRQdow0uqrEjNbl9WgB7j8vj4b3MlUQTszO-dJmIsgu_lrS31bIRUnKR9Ydcb136CJ9IVc-r9d9twNMsiigXLKA8s-ch9C3j9QHsuDFXUj7Jlr8pxrLBElmsyWfjm9TuXoKl1ZpqUV060M6Xmb3VmKu1sTfdXRJmSmoV1VzgyKhP1SwRFZC2tWOELaSWoPfMH3WiegEnTz7Ty2RyVsEMbbKpQvRgn7z4bYCbc5ik-3DAhMJWpffUikEWwmnncgcGT_oxIsunxPXx5YJ_sWuWN-BXyFOPq4WF6ibq8CJNUzVvN--0WHTZvlP_dpAwC6KS4Q-EMKBehOl-EdpMuxTiaF8ierTlxqwIXBnSn7RX_A36ren6y.VlZxwaWae2DILDspfDp7RA"
