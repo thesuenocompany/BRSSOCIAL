@@ -1,0 +1,21 @@
+name: Deploy Brothers Tavern mobile navigation fix
+
+on:
+  push:
+    branches:
+      - netlify-mobile-nav-20260831
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Brothers Tavern build
+        run: |
+          curl -L "https://at.adobe.com/jNMetTY3CgEl6va4" -o site.zip
+          mkdir -p deploy
+          unzip -q site.zip -d deploy
+      - name: Deploy to Netlify staging
+        working-directory: deploy
+        run: |
+          npx -y @netlify/mcp@latest --site-id 0b1eb2b5-8e49-4e0f-aa5b-9cd0453d8fd4 --proxy-path "https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..A-WT2oPZoL-JkOYv.2XR_YxXVuIdKZwTNgHjpeOqkAGTZ19OyJVJiJ57cF9LDozS-diSPWXfQncs2G28jV8YA0O2TYjwkZ3FX7JsocCmYv5Bj0QFD0CnT_8KkqHhxvind59IBuBA3anUZJ2l1Wcc10fpf5r5jnVNt7FwWKJwsIz5uBRixPkXhz8-5b7GSgRwxSMLYFYNy6ZgfPKdrCGBdj_pK5O8WAIjr6__wrAOy6Rf4vPDe89-lYJFZeNuvHs00EKUZcD6ULRhViHPzCx8226W_zeiszQmbPuSPFjBAMcaAhz4HYE1gerSc-Q9wvT7GMAPQDTqrBugUbqmprYNaSz0ha1DaJQNQimqQrsULwBDx5HHVzNDrIjGhfEOmS2SVSlkORsznUAkHeW32ldU4Afvq.7JF3nnJ9wkkNqUMbxeOkKA"
